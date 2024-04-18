@@ -1,0 +1,3 @@
+[submodule "Quantum_Cryptography_Notes"]
+	path = Quantum_Cryptography_Notes
+	url = https://github.com/krishnapuja/Quantum_Cryptography_Notes.git
