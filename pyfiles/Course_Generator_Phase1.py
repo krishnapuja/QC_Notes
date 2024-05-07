@@ -167,14 +167,14 @@ class NotebookGenerator:
                 profit for all the nodes using profits of child nodes. 
                 profit of a cell = profit of the level/ estimated time. (profit = 1 for all levels at present) = 1 / estimated time
                 profit of parent cell =  sum of profit of all child cells + profit of current cell
-                '''
+                '''  
                 totlfracProfit = 0
                 neighbours = self.get_notebook_cells_from_cell_id(cellId).metadata.cell_details.cell_prereqs
                 
                 for neighbour in neighbours:
                     fracProfit = 0
                     neighbour_cell = self.get_notebook_cells_from_cell_id(neighbour)
-                    if neighbour not in visited and neighbour_cell.metadata.cell_details.cell_concepts[0] not in self.pre_req_concepts:
+                    if neighbour not in visited:
                         visited.add(neighbour)
                         next_profit = curr_profit
                         fracProfit += next_profit*int(neighbour_cell.metadata.cell_details.cell_estimated_time) + dfsWeightCalc(neighbour, next_profit)
@@ -193,13 +193,13 @@ class NotebookGenerator:
             '''
             for concept in self.selected_concepts:
                 concept_cell = self.get_notebook_cells_from_cell_id(concept)
-                if  concept not in visited and concept_cell.metadata.cell_details.cell_concepts[0] not in self.pre_req_concepts:
+                if  concept not in visited:
                     visited.add(concept)
                     curr_profit = 1
                     fracProfit = dfsWeightCalc(concept,curr_profit)
                     concept_cell.profit = curr_profit
                     concept_cell.fracProfit = fracProfit+ curr_profit*int(concept_cell.metadata.cell_details.cell_estimated_time)
-                    print(concept,concept_cell.metadata.cell_details.cell_estimated_time, concept_cell.fracProfit)
+                    #print(concept,concept_cell.metadata.cell_details.cell_estimated_time, concept_cell.fracProfit)
 
             '''
             Below two blocks of code iterates through all nodes using DFS approach and pick the cells using the given available time.  
@@ -211,7 +211,7 @@ class NotebookGenerator:
                 # get the cell content using cellId
                 for neighbour in neighbours:
                     neighbour_cells.append(self.get_notebook_cells_from_cell_id(neighbour))
-
+                #print(neighbour_cells)
                 # sort the cells using profit such that cells with more profit is prioritized first    
                 neighbour_cells = sorted(neighbour_cells, reverse=True, key=lambda x: x.fracProfit if total_time - x.fracProfit > 0 else total_time - x.fracProfit )
 
@@ -224,8 +224,8 @@ class NotebookGenerator:
                     if total_time > 0 and neighbour not in seen and neighbour_cell.metadata.cell_details.cell_concepts[0] not in self.pre_req_concepts:
                         seen.add(neighbour)
                         total_time = dfs(neighbour, total_time)
-                        print(neighbour, neighbour_cell.metadata.cell_details.cell_estimated_time, neighbour_cell.fracProfit)
-
+                        #print(neighbour, neighbour_cell.metadata.cell_details.cell_estimated_time, neighbour_cell.fracProfit)
+                        print(neighbour)
                         cell_time = int(neighbour_cell.metadata.cell_details.cell_estimated_time)
                         if cell_time <= total_time:
                             total_time -= cell_time
@@ -252,12 +252,13 @@ class NotebookGenerator:
             '''
             for concept_cell in concept_cells:
                 concept = concept_cell.metadata.cell_details.cell_ID
-                print(concept)
+                
 
                 if total_time > 0 and concept not in seen and concept_cell.metadata.cell_details.cell_concepts[0] not in self.pre_req_concepts:
-                    print('dddd',concept)
+                    #print('dddd',concept)
                     seen.add(concept)
                     total_time = dfs(concept,total_time)
+                    print(concept)
                     cell_time = int(concept_cell.metadata.cell_details.cell_estimated_time)
                     if cell_time <= total_time:
                         total_time -= cell_time
